@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0}
+input,button,select,textarea{font-family:inherit}
+::-webkit-scrollbar{display:none}
+@keyframes df-fall{0%{transform:translateY(-8vh) rotate(0deg);opacity:1}100%{transform:translateY(108vh) rotate(720deg);opacity:1}}
+@keyframes df-blink{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes df-scale{0%{transform:scale(.92);opacity:0}100%{transform:scale(1);opacity:1}}
+@media print{
+  .no-print{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  .print-only{display:block!important}
+}
+.print-only{display:none}
+</style>
+</helmet>
+
+<div style="{{ rootStyle }}">
+
+<!-- LOADING -->
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--accent);font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:4px;font-size:13px">DASHFIT…</div>
+</sc-if>
+
+<!-- ONBOARDING -->
+<sc-if value="{{ showOnboard }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100vh;background:var(--bg);color:var(--text);overflow-y:auto">
+    <div style="max-width:460px;margin:0 auto;padding:36px 22px 56px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:46px;height:46px;background:var(--accent);border:3px solid #000;border-radius:13px;box-shadow:4px 4px 0 #000;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:26px;color:#06140B;flex:none">D</div>
+        <span style="font-family:'Space Grotesk';font-weight:700;font-size:30px;letter-spacing:-1px">DashFit</span>
+      </div>
+      <h1 style="font-family:'Space Grotesk';font-weight:700;font-size:40px;line-height:.95;margin:18px 0 10px;letter-spacing:-2px">Bora começar.<br><span style="color:var(--accent)">Sem desculpas.</span></h1>
+      <p style="color:var(--dim);font-size:14px;margin:0 0 30px;line-height:1.65">8 semanas de calistenia. Zero desculpas. Feito para iniciantes. Feito para durar.</p>
+
+      <label style="{{ labelSt }}">Seu nome *</label>
+      <input value="{{ form.name }}" onInput="{{ onName }}" placeholder="Como te chamam?" style="{{ inputSt }};margin:7px 0 18px">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="{{ labelSt }}">Idade</label><input value="{{ form.age }}" onInput="{{ onAge }}" type="number" inputmode="numeric" style="{{ inputSt }};margin-top:7px"></div>
+        <div><label style="{{ labelSt }}">Altura (cm)</label><input value="{{ form.height }}" onInput="{{ onHeight }}" type="number" inputmode="numeric" style="{{ inputSt }};margin-top:7px"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+        <div><label style="{{ labelSt }}">Peso atual (kg)</label><input value="{{ form.weight }}" onInput="{{ onWeight }}" type="number" inputmode="decimal" style="{{ inputSt }};margin-top:7px"></div>
+        <div><label style="{{ labelSt }}">Meta de peso (kg)</label><input value="{{ form.goal }}" onInput="{{ onGoal }}" type="number" inputmode="decimal" style="{{ inputSt }};margin-top:7px"></div>
+      </div>
+
+      <label style="{{ labelSt }}">Dias de treino por semana</label>
+      <div style="display:flex;gap:8px;margin-top:8px;margin-bottom:28px">
+        <sc-for list="{{ freqOpts }}" as="f" hint-placeholder-count="4">
+          <button onClick="{{ f.set }}" style="{{ f.style }}">{{ f.label }}</button>
+        </sc-for>
+      </div>
+
+      <button onClick="{{ submitOnboard }}" style="width:100%;padding:18px;font-family:'Space Grotesk';font-weight:700;font-size:17px;background:var(--accent);color:#06140B;border:3px solid #000;border-radius:16px;box-shadow:5px 5px 0 #000;cursor:pointer;letter-spacing:.5px">COMEÇAR MINHA JORNADA →</button>
+      <p style="text-align:center;color:var(--dim);font-size:12px;margin-top:14px">Dados salvos apenas neste dispositivo.</p>
+    </div>
+  </div>
+</sc-if>
+
+<!-- APP -->
+<sc-if value="{{ showApp }}" hint-placeholder-val="{{ false }}">
+  <div class="no-print" style="min-height:100vh;background:var(--bg);color:var(--text);max-width:460px;margin:0 auto;position:relative;padding-bottom:88px;overflow-x:hidden">
+
+    <!-- TOPBAR -->
+    <div style="position:sticky;top:0;z-index:30;background:var(--bgTrans);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:2.5px solid var(--line);padding:11px 16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;background:var(--accent);border:2.5px solid #000;border-radius:8px;box-shadow:2px 2px 0 #000;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#06140B;flex:none">D</div>
+        <span style="font-family:'Space Grotesk';font-weight:700;font-size:18px;letter-spacing:-.5px">DashFit</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:7px">
+        <div style="display:flex;align-items:center;gap:4px;background:var(--surface);border:2px solid var(--line2);border-radius:20px;padding:5px 10px">
+          <span style="font-size:13px">🔥</span>
+          <span style="font-family:'Space Grotesk';font-weight:700;font-size:14px">{{ streak }}</span>
+        </div>
+        <button onClick="{{ toggleTheme }}" style="width:32px;height:32px;background:var(--surface);border:2px solid var(--line2);border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;color:var(--text)">{{ themeIcon }}</button>
+        <button onClick="{{ openProfile }}" style="width:32px;height:32px;background:var(--accent);border:2.5px solid #000;border-radius:8px;box-shadow:2px 2px 0 #000;cursor:pointer;font-family:'Space Grotesk';font-weight:700;font-size:13px;color:#06140B">{{ avatarInitial }}</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div style="padding:16px 16px 8px">
+
+      <!-- ══ HOME ══ -->
+      <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <p style="font-size:13px;color:var(--dim);margin:0 0 2px;font-weight:500">{{ greeting }}</p>
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:27px;margin:0 0 16px;letter-spacing:-.5px">{{ userName }} 👊</h2>
+
+          <!-- Quote -->
+          <div style="background:#06140B;border:3px solid #000;border-radius:16px;box-shadow:5px 5px 0 var(--accent);padding:17px 20px;margin-bottom:16px;position:relative;overflow:hidden;min-height:76px">
+            <div style="position:absolute;right:-2px;top:-18px;font-size:100px;opacity:.08;font-family:'Space Grotesk';font-weight:700;color:var(--accent);line-height:1;pointer-events:none">"</div>
+            <p style="font-family:'Space Grotesk';font-weight:600;font-size:16px;line-height:1.3;margin:0;color:#fff;position:relative">{{ quote }}</p>
+          </div>
+
+          <!-- Treino do dia -->
+          <div style="background:var(--accent);border:3px solid #000;border-radius:18px;box-shadow:5px 5px 0 #000;padding:18px;margin-bottom:16px;color:#06140B">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+              <div style="flex:1;min-width:0">
+                <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;opacity:.6">Treino de hoje · {{ todayName }}</span>
+                <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:21px;margin:4px 0 2px;letter-spacing:-.5px;line-height:1.1">{{ todayFoco }}</h3>
+                <span style="font-size:13px;font-weight:600;opacity:.75">{{ todaySub }}</span>
+              </div>
+              <div style="background:#06140B;color:var(--accent);width:52px;height:52px;border-radius:12px;border:2px solid #000;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none">
+                <span style="font-family:'Space Grotesk';font-weight:700;font-size:22px;line-height:1">{{ todayDoneCount }}</span>
+                <span style="font-size:9px;font-weight:700;opacity:.6">/{{ todayExCount }}</span>
+              </div>
+            </div>
+            <button onClick="{{ goWorkout }}" style="margin-top:13px;width:100%;padding:13px;background:#06140B;color:var(--accent);border:2.5px solid #000;border-radius:12px;font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;letter-spacing:.5px">{{ todayCta }}</button>
+          </div>
+
+          <!-- Ring + Phase -->
+          <div style="display:flex;gap:12px;margin-bottom:16px">
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;display:flex;flex-direction:column;align-items:center;flex:none;width:144px">
+              <div style="position:relative;width:108px;height:108px">
+                <svg width="108" height="108" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="var(--track)" stroke-width="11"></circle>
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="11" stroke-linecap="round" stroke-dasharray="{{ ringCirc }}" stroke-dashoffset="{{ ringOff }}" style="transition:stroke-dashoffset .8s ease"></circle>
+                </svg>
+                <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+                  <span style="font-family:'Space Grotesk';font-weight:700;font-size:27px;line-height:1">{{ weekPct }}%</span>
+                  <span style="font-size:9px;color:var(--dim);font-weight:700;letter-spacing:.5px">DA SEMANA</span>
+                </div>
+              </div>
+              <span style="font-size:11px;color:var(--dim);font-weight:600;margin-top:7px;text-align:center">{{ weekDoneDays }}/5 treinos</span>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+              <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:13px;flex:1;display:flex;flex-direction:column;justify-content:center">
+                <span style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">Fase {{ phaseId }} · Semana {{ weekNum }}/8</span>
+                <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:3px 0 7px;color:{{ phaseColor }}">{{ phaseName }}</h4>
+                <div style="height:7px;background:var(--track);border-radius:4px;overflow:hidden">
+                  <div style="height:100%;width:{{ programPct }}%;background:{{ phaseColor }};border-radius:4px;transition:width .7s ease"></div>
+                </div>
+                <p style="font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.4">{{ phaseDesc }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats row -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:13px;padding:12px 8px">
+              <div style="font-size:17px;line-height:1">📅</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin-top:5px;line-height:1">S{{ weekNum }}</div>
+              <div style="font-size:9px;color:var(--dim);font-weight:700;margin-top:2px;text-transform:uppercase">semana</div>
+            </div>
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:13px;padding:12px 8px">
+              <div style="font-size:17px;line-height:1">✅</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin-top:5px;line-height:1">{{ totalDone }}</div>
+              <div style="font-size:9px;color:var(--dim);font-weight:700;margin-top:2px;text-transform:uppercase">exerc.</div>
+            </div>
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:13px;padding:12px 8px">
+              <div style="font-size:17px;line-height:1">⚖️</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin-top:5px;line-height:1">{{ curWeight }}</div>
+              <div style="font-size:9px;color:var(--dim);font-weight:700;margin-top:2px;text-transform:uppercase">{{ weightDelta }}</div>
+            </div>
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:13px;padding:12px 8px">
+              <div style="font-size:17px;line-height:1">🎯</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin-top:5px;line-height:1">{{ bmi }}</div>
+              <div style="font-size:9px;color:var(--dim);font-weight:700;margin-top:2px;text-transform:uppercase">IMC</div>
+            </div>
+          </div>
+
+          <!-- Goal progress bar -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:14px;margin-bottom:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:13px;font-weight:700">Meta: {{ goalWeight }} kg</span>
+              <span style="font-family:'Space Grotesk';font-weight:700;font-size:14px;color:var(--accent)">{{ progressPct }}% concluído</span>
+            </div>
+            <div style="height:10px;background:var(--track);border-radius:5px;overflow:hidden">
+              <div style="height:100%;width:{{ progressPct }}%;background:var(--accent);border-radius:5px;transition:width .8s ease"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px">
+              <span style="font-size:10px;color:var(--dim)">Início: {{ startWeight }} kg</span>
+              <span style="font-size:10px;color:var(--dim)">Faltam {{ toGoal }} kg</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ TREINOS ══ -->
+      <sc-if value="{{ isWorkouts }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <!-- Day selector -->
+          <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:12px;margin:-4px -4px 4px;padding:4px 4px 12px;scrollbar-width:none">
+            <sc-for list="{{ dayPills }}" as="dp" hint-placeholder-count="7">
+              <button onClick="{{ dp.go }}" style="{{ dp.style }}">
+                <span style="font-size:12px;font-weight:800;letter-spacing:.5px">{{ dp.dia }}</span>
+                <span style="font-size:10px;margin-top:2px;opacity:.8">{{ dp.sub }}</span>
+              </button>
+            </sc-for>
+          </div>
+
+          <!-- Phase + week nav -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+            <div style="background:{{ phaseColor }};border:2.5px solid #000;border-radius:8px;padding:5px 12px;font-family:'Space Grotesk';font-weight:700;font-size:11px;color:#06140B;box-shadow:2px 2px 0 #000;flex:none">FASE {{ phaseId }} — {{ phaseName }}</div>
+            <div style="display:flex;align-items:center;gap:5px;margin-left:auto">
+              <button onClick="{{ weekMinus }}" style="width:28px;height:28px;background:var(--surface);border:2px solid var(--line2);border-radius:7px;cursor:pointer;font-family:'Space Grotesk';font-weight:700;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center">‹</button>
+              <span style="font-family:'Space Grotesk';font-weight:700;font-size:13px;color:var(--dim);min-width:38px;text-align:center">S{{ weekNum }}/8</span>
+              <button onClick="{{ weekPlus }}" style="width:28px;height:28px;background:var(--surface);border:2px solid var(--line2);border-radius:7px;cursor:pointer;font-family:'Space Grotesk';font-weight:700;font-size:16px;color:var(--text);display:flex;align-items:center;justify-content:center">›</button>
+            </div>
+          </div>
+
+          <!-- Phase desc -->
+          <div style="background:var(--surface);border-left:4px solid {{ phaseColor }};border-radius:0 14px 14px 0;padding:12px 14px;margin-bottom:14px;border:2px solid var(--line2);border-left:4px solid {{ phaseColor }}">
+            <p style="font-size:13px;line-height:1.55;color:var(--dim);margin:0">{{ phaseDesc }}</p>
+          </div>
+
+          <!-- 8-week program timeline -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:13px;margin-bottom:14px">
+            <p style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin:0 0 10px">PROGRAMA 8 SEMANAS</p>
+            <div style="display:flex;gap:4px;align-items:center">
+              <sc-for list="{{ weekTimeline }}" as="wt" hint-placeholder-count="8">
+                <div onClick="{{ wt.go }}" style="{{ wt.style }}">
+                  <span style="font-size:9px;font-weight:800">S{{ wt.num }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:4px;margin-top:5px">
+              <sc-for list="{{ phaseLabels }}" as="pl" hint-placeholder-count="3">
+                <div style="{{ pl.style }}">{{ pl.label }}</div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- Rest day -->
+          <sc-if value="{{ dayIsRest }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:36px 20px;text-align:center">
+              <div style="font-size:60px;margin-bottom:14px">🧘</div>
+              <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:24px;margin:0 0 10px">{{ dayFoco }}</h3>
+              <p style="color:var(--dim);font-size:14px;margin:0 auto;line-height:1.7;max-width:300px">{{ dayNota }}</p>
+            </div>
+          </sc-if>
+
+          <!-- Exercise cards -->
+          <sc-if value="{{ dayHasEx }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:11px;padding-bottom:100px">
+              <sc-for list="{{ dayExercises }}" as="ex" hint-placeholder-count="5">
+                <div style="{{ ex.cardStyle }}">
+                  <div onClick="{{ ex.toggle }}" style="display:flex;gap:11px;align-items:flex-start;cursor:pointer">
+                    <div style="width:82px;height:68px;flex:none;border:2.5px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--surface2);color:var(--accent)">
+                      <dc-import name="Stick" move="{{ ex.move }}" hint-size="82px,68px"></dc-import>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:5px">
+                        <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0;line-height:1.2;flex:1">{{ ex.nome }}</h4>
+                        <div style="{{ ex.badgeStyle }}">{{ ex.badgeLabel }}</div>
+                      </div>
+                      <div style="font-size:13px;font-weight:700;color:var(--accent);margin-top:4px">{{ ex.presc }}</div>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:6px">
+                        <sc-for list="{{ ex.musc }}" as="m" hint-placeholder-count="2">
+                          <span style="font-size:10px;font-weight:700;padding:2px 7px;border:1.5px solid var(--line2);border-radius:20px;color:var(--dim)">{{ m }}</span>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <span style="font-size:12px;color:var(--dim);flex:none;padding-top:2px">{{ ex.chevron }}</span>
+                  </div>
+
+                  <sc-if value="{{ ex.expanded }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top:14px;padding-top:14px;border-top:2px solid var(--line2)">
+                      <p style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin:0 0 11px">PASSO A PASSO</p>
+                      <sc-for list="{{ ex.steps }}" as="step" hint-placeholder-count="3">
+                        <div style="display:flex;gap:10px;margin-bottom:10px;align-items:flex-start">
+                          <div style="width:24px;height:24px;flex:none;background:var(--accent);border:2px solid #000;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:12px;color:#06140B">{{ step.n }}</div>
+                          <p style="font-size:14px;line-height:1.55;margin:2px 0 0;color:var(--text)">{{ step.text }}</p>
+                        </div>
+                      </sc-for>
+                      <div style="background:var(--surface2);border:2px solid var(--line2);border-radius:12px;padding:12px;margin:12px 0">
+                        <span style="font-size:13px;line-height:1.5;color:var(--dim)">💡 {{ ex.dica }}</span>
+                      </div>
+                      <div style="display:flex;gap:9px">
+                        <button onClick="{{ ex.markDone }}" style="{{ ex.btnStyle }}">{{ ex.btnLabel }}</button>
+                        <a href="{{ ex.ytUrl }}" target="_blank" rel="noopener" style="flex:none;padding:12px 13px;border:2.5px solid var(--line2);border-radius:12px;font-weight:700;font-size:12px;color:var(--text);text-decoration:none;display:flex;align-items:center;gap:5px;background:var(--surface)">▶ YouTube</a>
+                      </div>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <!-- Timer FAB -->
+            <div style="position:fixed;bottom:100px;right:max(18px,calc((100vw - 460px)/2 + 18px));z-index:50">
+              <button onClick="{{ openTimer }}" style="width:54px;height:54px;background:var(--accent);border:3px solid #000;border-radius:50%;box-shadow:4px 4px 0 #000;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center">⏱</button>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <!-- ══ DIETA ══ -->
+      <sc-if value="{{ isDiet }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:24px;margin:0 0 3px;letter-spacing:-.5px">🥗 Plano Alimentar</h2>
+          <p style="color:var(--dim);font-size:13px;margin:0 0 16px">Sem lactose · Baixo custo · ~1900 kcal/dia</p>
+
+          <!-- Macros bar -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:16px;margin-bottom:16px">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;text-align:center;margin-bottom:12px">
+              <sc-for list="{{ macroItems }}" as="mac" hint-placeholder-count="4">
+                <div style="padding:10px 4px;border-radius:11px;background:var(--surface2);border:2px solid var(--line2)">
+                  <div style="font-family:'Space Grotesk';font-weight:700;font-size:16px;color:{{ mac.color }}">{{ mac.val }}</div>
+                  <div style="font-size:9px;font-weight:800;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-top:2px">{{ mac.label }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;height:8px;border-radius:5px;overflow:hidden;border:1.5px solid #000">
+              <div style="width:{{ macroPct.prot }}%;background:#3D7BF2"></div>
+              <div style="width:{{ macroPct.carb }}%;background:#F2B33D"></div>
+              <div style="width:{{ macroPct.gord }}%;background:#E8533F"></div>
+            </div>
+            <div style="display:flex;gap:12px;margin-top:7px;flex-wrap:wrap">
+              <span style="font-size:10px;font-weight:700;color:#3D7BF2">■ Proteína {{ macroPct.prot }}%</span>
+              <span style="font-size:10px;font-weight:700;color:#F2B33D">■ Carb {{ macroPct.carb }}%</span>
+              <span style="font-size:10px;font-weight:700;color:#E8533F">■ Gordura {{ macroPct.gord }}%</span>
+            </div>
+          </div>
+
+          <!-- Meals -->
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+            <sc-for list="{{ meals }}" as="meal" hint-placeholder-count="4">
+              <div style="{{ meal.cardStyle }}">
+                <div onClick="{{ meal.toggle }}" style="display:flex;justify-content:space-between;align-items:flex-start;cursor:pointer;gap:10px">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)">{{ meal.hora }}</div>
+                    <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:17px;margin:3px 0 0;line-height:1.1">{{ meal.nome }}</h4>
+                    <div style="display:flex;gap:7px;margin-top:6px;flex-wrap:wrap;align-items:center">
+                      <span style="font-size:13px;font-weight:800;color:var(--accent)">{{ meal.kcal }}kcal</span>
+                      <span style="font-size:11px;color:var(--dim);font-weight:600">P {{ meal.p }}g</span>
+                      <span style="font-size:11px;color:var(--dim);font-weight:600">C {{ meal.c }}g</span>
+                      <span style="font-size:11px;color:var(--dim);font-weight:600">G {{ meal.g }}g</span>
+                    </div>
+                  </div>
+                  <span style="font-size:16px;color:var(--dim);flex:none">{{ meal.chevron }}</span>
+                </div>
+                <sc-if value="{{ meal.expanded }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:13px;padding-top:13px;border-top:2px solid var(--line2)">
+                    <p style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin:0 0 9px">INGREDIENTES</p>
+                    <sc-for list="{{ meal.itens }}" as="item" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--track)">
+                        <div style="width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid #000;flex:none"></div>
+                        <span style="font-size:14px">{{ item }}</span>
+                      </div>
+                    </sc-for>
+                    <p style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--dim);margin:13px 0 7px">COMO PREPARAR</p>
+                    <p style="font-size:13px;line-height:1.65;color:var(--dim);margin:0">{{ meal.prep }}</p>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- Shopping list -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;overflow:hidden;margin-bottom:8px">
+            <div onClick="{{ toggleShop }}" style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+              <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:16px;margin:0">🛒 Lista de Compras</h4>
+              <span style="color:var(--dim);font-size:17px">{{ shopChevron }}</span>
+            </div>
+            <sc-if value="{{ shopOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 16px 18px">
+                <sc-for list="{{ shopCategories }}" as="cat" hint-placeholder-count="4">
+                  <div style="margin-bottom:14px">
+                    <p style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin:0 0 8px">{{ cat.name }}</p>
+                    <sc-for list="{{ cat.items }}" as="si" hint-placeholder-count="3">
+                      <div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--track)">
+                        <div style="width:10px;height:10px;background:var(--accent);border:2px solid #000;border-radius:3px;flex:none"></div>
+                        <span style="font-size:14px">{{ si }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ PROGRESSO ══ -->
+      <sc-if value="{{ isProgress }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:24px;margin:0 0 16px;letter-spacing:-.5px">📈 Progresso</h2>
+
+          <!-- Month calendar -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+              <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0">📅 {{ calMonthLabel }}</h4>
+              <div style="display:flex;gap:6px">
+                <button onClick="{{ calPrev }}" style="width:28px;height:28px;background:var(--surface2);border:2px solid var(--line2);border-radius:7px;cursor:pointer;font-family:'Space Grotesk';font-weight:700;font-size:15px;color:var(--text);display:flex;align-items:center;justify-content:center">‹</button>
+                <button onClick="{{ calNext }}" style="width:28px;height:28px;background:var(--surface2);border:2px solid var(--line2);border-radius:7px;cursor:pointer;font-family:'Space Grotesk';font-weight:700;font-size:15px;color:var(--text);display:flex;align-items:center;justify-content:center">›</button>
+              </div>
+            </div>
+            {{ monthCalendar }}
+          </div>
+
+          <!-- Weight entry + line chart -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 11px">⚖️ Registrar Peso</h4>
+            <div style="display:flex;gap:9px;margin-bottom:12px">
+              <input value="{{ newWeight }}" onInput="{{ onWeightInput }}" type="number" inputmode="decimal" placeholder="Ex: 105.2" style="flex:1;padding:12px;font-size:16px;font-weight:600;background:var(--surface2);color:var(--text);border:2.5px solid var(--line2);border-radius:12px;outline:none">
+              <button onClick="{{ addWeight }}" style="padding:12px 16px;background:var(--accent);color:#06140B;border:2.5px solid #000;border-radius:12px;box-shadow:3px 3px 0 #000;font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;flex:none">+KG</button>
+            </div>
+            {{ weightLineChart }}
+          </div>
+
+          <!-- Habits -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 11px">✅ Hábitos de Hoje</h4>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <sc-for list="{{ habitItems }}" as="h" hint-placeholder-count="6">
+                <div onClick="{{ h.toggle }}" style="{{ h.style }}">
+                  <div style="display:flex;align-items:center;gap:9px;flex:1">
+                    <span style="font-size:20px">{{ h.icon }}</span>
+                    <span style="font-size:14px;font-weight:600">{{ h.nome }}</span>
+                  </div>
+                  <div style="{{ h.checkStyle }}">{{ h.checkIcon }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- Weight history -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:8px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 11px">📋 Histórico de Peso</h4>
+            <sc-for list="{{ weightHistory }}" as="we" hint-placeholder-count="3">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1.5px solid var(--track)">
+                <span style="font-size:12px;color:var(--dim)">{{ we.date }}</span>
+                <span style="font-family:'Space Grotesk';font-weight:700;font-size:17px">{{ we.kg }} kg</span>
+                <span style="font-size:12px;font-weight:700;color:{{ we.dc }}">{{ we.delta }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ══ GESTÃO ══ -->
+      <sc-if value="{{ isManage }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:24px;margin:0 0 3px;letter-spacing:-.5px">📊 Gestão</h2>
+          <p style="color:var(--dim);font-size:13px;margin:0 0 16px">Relatórios · Evolução · Análise</p>
+
+          <!-- Summary cards -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px">
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:14px">
+              <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">{{ userName }}</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:32px;margin:5px 0 1px;line-height:1;letter-spacing:-1px">{{ curWeight }}<span style="font-size:13px"> kg</span></div>
+              <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:9px">{{ weightDelta }}</div>
+              <div style="font-size:10px;color:var(--dim);margin-bottom:4px">Meta: {{ goalWeight }} kg</div>
+              <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:{{ progressPct }}%;background:var(--accent);border-radius:3px"></div>
+              </div>
+            </div>
+            <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:14px">
+              <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--dim)">Aderência</div>
+              <div style="font-family:'Space Grotesk';font-weight:700;font-size:32px;margin:5px 0 1px;line-height:1;letter-spacing:-1px;color:var(--accent)">{{ adherencePct }}<span style="font-size:13px;color:var(--text)">%</span></div>
+              <div style="font-size:12px;color:var(--dim);font-weight:600;margin-bottom:9px">semana atual</div>
+              <div style="font-size:10px;color:var(--dim);margin-bottom:4px">{{ totalDone }} exerc. feitos</div>
+              <div style="height:6px;background:var(--track);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:{{ adherencePct }}%;background:var(--accent);border-radius:3px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Weight line chart -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 2px">Evolução de Peso</h4>
+            <p style="font-size:11px;color:var(--dim);margin:0 0 4px">Todos os registros (kg)</p>
+            {{ manageLineChart }}
+          </div>
+
+          <!-- Adherence bars -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 2px">Aderência por Semana</h4>
+            <p style="font-size:11px;color:var(--dim);margin:0 0 4px">% de exercícios concluídos</p>
+            {{ adherenceChart }}
+          </div>
+
+          <!-- Macros summary -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:18px;padding:14px;margin-bottom:14px">
+            <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:0 0 14px">Metas Nutricionais</h4>
+            <sc-for list="{{ macroSummary }}" as="ms" hint-placeholder-count="4">
+              <div style="margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                  <span style="font-size:13px;font-weight:600">{{ ms.label }}</span>
+                  <span style="font-family:'Space Grotesk';font-weight:700;font-size:13px;color:{{ ms.color }}">{{ ms.val }}</span>
+                </div>
+                <div style="height:7px;background:var(--track);border-radius:4px;overflow:hidden">
+                  <div style="height:100%;width:{{ ms.pct }}%;background:{{ ms.color }};border-radius:4px"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <button onClick="{{ printReport }}" style="width:100%;padding:15px;background:var(--surface);border:2.5px solid var(--line2);border-radius:14px;font-family:'Space Grotesk';font-weight:700;font-size:15px;cursor:pointer;color:var(--text);margin-bottom:8px;box-shadow:3px 3px 0 var(--line2)">🖨️ Exportar / Imprimir Relatório</button>
+        </div>
+      </sc-if>
+
+    </div><!-- /content -->
+
+    <!-- BOTTOM NAV -->
+    <div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:460px;z-index:40;background:var(--bgTrans);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:2.5px solid var(--line);display:flex;padding:6px 2px 12px">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.go }}" style="{{ n.style }}">
+          <span style="font-size:19px;line-height:1">{{ n.icon }}</span>
+          <span style="font-size:9px;font-weight:700;margin-top:2px;letter-spacing:.1px">{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <!-- TIMER OVERLAY -->
+    <sc-if value="{{ restOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeTimer }}" style="position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center">
+        <div onClick="{{ stopProp }}" style="width:100%;max-width:460px;background:var(--bg);border:2.5px solid #000;border-top:4px solid var(--accent);border-radius:26px 26px 0 0;padding:22px 20px 42px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:0">⏱ Descanso</h3>
+            <button onClick="{{ closeTimer }}" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--dim)">✕</button>
+          </div>
+          {{ restDisplay }}
+          <div style="display:flex;gap:7px;justify-content:center;margin:18px 0 14px">
+            <sc-for list="{{ timerPresets }}" as="tp" hint-placeholder-count="4">
+              <button onClick="{{ tp.set }}" style="{{ tp.style }}">{{ tp.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;gap:9px">
+            <button onClick="{{ timerToggle }}" style="flex:1;padding:15px;background:var(--accent);border:2.5px solid #000;border-radius:14px;box-shadow:3px 3px 0 #000;font-family:'Space Grotesk';font-weight:700;font-size:16px;cursor:pointer;color:#06140B">{{ timerBtnLabel }}</button>
+            <button onClick="{{ timerReset }}" style="padding:15px 20px;background:var(--surface);border:2.5px solid var(--line2);border-radius:14px;font-family:'Space Grotesk';font-weight:700;font-size:20px;cursor:pointer;color:var(--text)">↺</button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- PROFILE OVERLAY -->
+    <sc-if value="{{ profileOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center">
+        <div onClick="{{ stopProp }}" style="width:100%;max-width:460px;background:var(--bg);border:2.5px solid #000;border-top:4px solid var(--accent);border-radius:26px 26px 0 0;padding:22px 20px 42px;max-height:92vh;overflow-y:auto">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:22px;margin:0">👤 Perfil</h3>
+            <button onClick="{{ closeOverlay }}" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--dim)">✕</button>
+          </div>
+          <div style="display:grid;gap:12px;margin-bottom:18px">
+            <div><label style="{{ labelSt }}">Nome</label><input value="{{ editName }}" onInput="{{ onEditName }}" style="{{ inputSt }};margin-top:6px"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div><label style="{{ labelSt }}">Peso atual (kg)</label><input value="{{ editWeight }}" onInput="{{ onEditWeight }}" type="number" style="{{ inputSt }};margin-top:6px"></div>
+              <div><label style="{{ labelSt }}">Meta (kg)</label><input value="{{ editGoal }}" onInput="{{ onEditGoal }}" type="number" style="{{ inputSt }};margin-top:6px"></div>
+            </div>
+            <div><label style="{{ labelSt }}">Altura (cm)</label><input value="{{ editHeight }}" onInput="{{ onEditHeight }}" type="number" style="{{ inputSt }};margin-top:6px"></div>
+            <div><label style="{{ labelSt }}">Semana do programa (1–8)</label><input value="{{ editWeek }}" onInput="{{ onEditWeek }}" type="number" min="1" max="8" style="{{ inputSt }};margin-top:6px"></div>
+          </div>
+          <button onClick="{{ saveProfile }}" style="width:100%;padding:15px;background:var(--accent);color:#06140B;border:2.5px solid #000;border-radius:14px;box-shadow:3px 3px 0 #000;font-family:'Space Grotesk';font-weight:700;font-size:16px;cursor:pointer;margin-bottom:20px">SALVAR ✓</button>
+
+          <div style="border-top:2px solid var(--line2);padding-top:18px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px">
+              <div>
+                <h4 style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:0">🤰 Minha Esposa</h4>
+                <p style="color:var(--dim);font-size:12px;margin:3px 0 0">Programa pré-natal leve</p>
+              </div>
+              <button onClick="{{ goPregnancy }}" style="padding:9px 13px;background:var(--accent);border:2.5px solid #000;border-radius:10px;box-shadow:2px 2px 0 #000;font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer;color:#06140B;flex:none">ACESSAR →</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div><label style="{{ labelSt }}">Nome dela</label><input value="{{ partnerNameVal }}" onInput="{{ onPartnerName }}" style="{{ inputSt }};margin-top:6px"></div>
+              <div><label style="{{ labelSt }}">Semanas grávida</label><input value="{{ partnerWeeksVal }}" onInput="{{ onPartnerWeeks }}" type="number" style="{{ inputSt }};margin-top:6px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- PREGNANCY OVERLAY -->
+    <sc-if value="{{ pregnancyOpen }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center">
+        <div onClick="{{ stopProp }}" style="width:100%;max-width:460px;background:var(--bg);border:2.5px solid #000;border-top:4px solid #F2B33D;border-radius:26px 26px 0 0;padding:22px 20px 44px;max-height:94vh;overflow-y:auto">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+            <div>
+              <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:22px;margin:0">🤰 Pré-natal</h3>
+              <p style="color:var(--dim);font-size:13px;margin:3px 0 0">{{ pregnancyName }} · {{ pregnancyWeeks }} semanas</p>
+            </div>
+            <button onClick="{{ closeOverlay }}" style="background:none;border:none;cursor:pointer;font-size:22px;color:var(--dim)">✕</button>
+          </div>
+
+          <!-- Pregnancy progress bar -->
+          <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:14px;padding:13px;margin:13px 0">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+              <span style="font-size:12px;font-weight:600;color:var(--dim)">Progresso da gestação</span>
+              <span style="font-family:'Space Grotesk';font-weight:700;font-size:16px;color:#F2B33D">{{ pregnancyWeeks }}/40 sem</span>
+            </div>
+            <div style="height:10px;background:var(--track);border-radius:5px;overflow:hidden">
+              <div style="height:100%;width:{{ pregnancyPct }}%;background:#F2B33D;border-radius:5px"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px">
+              <span style="font-size:9px;color:var(--dim)">Semana 1</span>
+              <span style="font-size:9px;color:#F2B33D;font-weight:700">{{ pregnancyWeeksLeft }} semanas para o parto</span>
+              <span style="font-size:9px;color:var(--dim)">40</span>
+            </div>
+          </div>
+
+          <!-- Disclaimer -->
+          <div style="background:#1a0f00;border:2.5px solid #F2B33D;border-radius:13px;padding:13px;margin-bottom:16px">
+            <p style="color:#F2B33D;font-size:12px;margin:0;line-height:1.55;font-weight:500">⚠️ {{ prenatalDisclaimer }}</p>
+          </div>
+
+          <!-- Prenatal tabs -->
+          <div style="display:flex;gap:8px;margin-bottom:14px">
+            <button onClick="{{ setPrenatalTab0 }}" style="{{ prenatalTab0Style }}">🏃 Exercícios</button>
+            <button onClick="{{ setPrenatalTab1 }}" style="{{ prenatalTab1Style }}">🥗 Dieta</button>
+            <button onClick="{{ setPrenatalTab2 }}" style="{{ prenatalTab2Style }}">⚖️ Peso</button>
+          </div>
+
+          <!-- Prenatal exercises -->
+          <sc-if value="{{ prenatalIsEx }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <sc-for list="{{ prenatalExercises }}" as="pe" hint-placeholder-count="5">
+                <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:14px">
+                  <div style="display:flex;gap:11px;align-items:flex-start">
+                    <div style="width:68px;height:58px;flex:none;border:2px solid var(--line2);border-radius:10px;overflow:hidden;background:var(--surface2);color:#F2B33D">
+                      <dc-import name="Stick" move="{{ pe.move }}" hint-size="68px,58px"></dc-import>
+                    </div>
+                    <div style="flex:1;min-width:0">
+                      <h5 style="font-family:'Space Grotesk';font-weight:700;font-size:14px;margin:0 0 2px">{{ pe.nome }}</h5>
+                      <span style="font-size:11px;font-weight:700;color:#F2B33D;background:rgba(242,179,61,.15);padding:2px 7px;border-radius:5px">{{ pe.tempo }}</span>
+                      <p style="font-size:13px;color:var(--dim);margin:7px 0 0;line-height:1.5">{{ pe.desc }}</p>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- Prenatal diet -->
+          <sc-if value="{{ prenatalIsDiet }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ prenatalDiet }}" as="pd" hint-placeholder-count="4">
+                <div style="background:var(--surface);border:2.5px solid var(--line2);border-radius:16px;padding:14px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
+                    <div>
+                      <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim)">{{ pd.hora }}</div>
+                      <h5 style="font-family:'Space Grotesk';font-weight:700;font-size:15px;margin:3px 0 0">{{ pd.nome }}</h5>
+                    </div>
+                    <span style="font-size:13px;font-weight:800;color:#F2B33D">{{ pd.kcal }} kcal</span>
+                  </div>
+                  <sc-for list="{{ pd.itens }}" as="pi" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--track)">
+                      <div style="width:5px;height:5px;background:#F2B33D;border-radius:50%;flex:none"></div>
+                      <span style="font-size:13px">{{ pi }}</span>
+                    </div>
+                  </sc-for>
+                  <p style="font-size:11px;color:#F2B33D;margin:9px 0 0;line-height:1.5;font-style:italic">{{ pd.nota }}</p>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- Partner weight -->
+          <sc-if value="{{ prenatalIsWeight }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="display:flex;gap:9px;margin-bottom:14px">
+                <input value="{{ newPartnerWeight }}" onInput="{{ onPartnerWeightInput }}" type="number" inputmode="decimal" placeholder="Ex: 70.5" style="flex:1;padding:12px;font-size:15px;font-weight:600;background:var(--surface2);color:var(--text);border:2.5px solid var(--line2);border-radius:12px;outline:none">
+                <button onClick="{{ addPartnerWeight }}" style="padding:12px 15px;background:#F2B33D;color:#06140B;border:2.5px solid #000;border-radius:12px;box-shadow:3px 3px 0 #000;font-family:'Space Grotesk';font-weight:700;font-size:14px;cursor:pointer;flex:none">+KG</button>
+              </div>
+              {{ partnerWeightChart }}
+              <sc-for list="{{ partnerWeightHistory }}" as="pw" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1.5px solid var(--track)">
+                  <span style="font-size:13px;color:var(--dim)">{{ pw.date }}</span>
+                  <span style="font-family:'Space Grotesk';font-weight:700;font-size:16px">{{ pw.kg }} kg</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- CONFETTI -->
+    <sc-if value="{{ confetti }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden">{{ confettiPieces }}</div>
+    </sc-if>
+
+  </div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:460,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  KEY = "dashfit_v2";
+  state = {
+    loading:true, D:null, onboarded:false,
+    user:{name:"",age:28,height:175,weight:106,goal:90,freq:5},
+    partner:{name:"Esposa",weeks:32},
+    theme:"dark", week:1, selDay:null,
+    done:{}, weightLog:[], partnerWeightLog:[], habits:{},
+    streak:0, lastActive:null, startDate:null,
+    tab:"home", overlay:null,
+    expEx:null, expMeal:null, expShop:false,
+    rest:{open:false,remaining:60,preset:60,running:false},
+    confetti:false, quoteIdx:0,
+    newWeight:"", newPartnerWeight:"",
+    form:{name:"",age:28,height:175,weight:106,goal:90,freq:5},
+    editName:"",editWeight:"",editGoal:"",editHeight:175,editWeek:1,
+    partnerNameEdit:"",partnerWeeksEdit:32,
+    calYear:new Date().getFullYear(), calMonth:new Date().getMonth(),
+    prenatalTab:0
+  };
+
+  async componentDidMount(){
+    try{
+      const raw=localStorage.getItem(this.KEY);
+      if(raw){
+        const s=JSON.parse(raw);
+        this.setState({
+          onboarded:!!s.onboarded, user:s.user||this.state.user,
+          partner:s.partner||this.state.partner, theme:s.theme||"dark",
+          week:s.week||1, done:s.done||{}, weightLog:s.weightLog||[],
+          partnerWeightLog:s.partnerWeightLog||[], habits:s.habits||{},
+          streak:s.streak||0, lastActive:s.lastActive||null, startDate:s.startDate||null,
+          form:{...(s.user||this.state.form)}
+        });
+      }
+    }catch(e){}
+    try{
+      const D=await import("./dashfit-data.js");
+      this.setState({D,loading:false,selDay:this.todayIdx()});
+    }catch(e){this.setState({loading:false});}
+    this._qt=setInterval(()=>this.setState(s=>({quoteIdx:(s.quoteIdx+1)%(s.D?s.D.QUOTES.length:12)})),7000);
+  }
+  componentWillUnmount(){clearInterval(this._qt);clearInterval(this._rt);}
+
+  persist(extra={}){
+    const s={...this.state,...extra};
+    try{
+      localStorage.setItem(this.KEY,JSON.stringify({
+        onboarded:s.onboarded,user:s.user,partner:s.partner,theme:s.theme,
+        week:s.week,done:s.done,weightLog:s.weightLog,partnerWeightLog:s.partnerWeightLog,
+        habits:s.habits,streak:s.streak,lastActive:s.lastActive,startDate:s.startDate
+      }));
+    }catch(e){}
+  }
+
+  todayIdx(){return (new Date().getDay()+6)%7;}
+  todayISO(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  key(w,d,ex){return `${w}-${d}-${ex}`;}
+  isDone(w,d,ex){return !!this.state.done[this.key(w,d,ex)];}
+
+  dayStats(i){
+    const {D,week}=this.state; if(!D) return {done:0,total:0};
+    const day=D.SPLIT[i]; if(!day||day.rest) return {done:0,total:0};
+    return {total:day.ex.length,done:day.ex.filter(ex=>this.isDone(week,i,ex)).length};
+  }
+  trainingDays(){if(!this.state.D) return [];return this.state.D.SPLIT.map((d,i)=>({...d,i})).filter(d=>!d.rest);}
+  weekDoneDays(){return this.trainingDays().filter(d=>{const s=this.dayStats(d.i);return s.total>0&&s.done===s.total;}).length;}
+  weekPct(){
+    const tds=this.trainingDays(); if(!tds.length) return 0;
+    let done=0,total=0; tds.forEach(d=>{const s=this.dayStats(d.i);done+=s.done;total+=s.total;});
+    return total?Math.round(done/total*100):0;
+  }
+  totalDoneCount(){return Object.keys(this.state.done).length;}
+
+  tokens(){
+    const dark=this.state.theme==="dark";
+    if(dark) return {bg:"#0B0D0C",bgTrans:"rgba(11,13,12,0.92)",surface:"#161A18",surface2:"#1C2120",text:"#F1F4F0",dim:"#7A8880",line:"#000",line2:"#252C29",accent:"#2ECC71",track:"#1E2421"};
+    return {bg:"#ECEAE1",bgTrans:"rgba(236,234,225,0.92)",surface:"#FFFFFF",surface2:"#F0EDE4",text:"#0A0B0A",dim:"#5C5C54",line:"#0A0B0A",line2:"#C4C0B4",accent:"#2ECC71",track:"#D8D5CB"};
+  }
+  rootStyle(){
+    const t=this.tokens();
+    return {"--bg":t.bg,"--bgTrans":t.bgTrans,"--surface":t.surface,"--surface2":t.surface2,"--text":t.text,"--dim":t.dim,"--line":t.line,"--line2":t.line2,"--accent":t.accent,"--track":t.track,minHeight:"100vh",background:t.bg,color:t.text,fontFamily:"'Inter',sans-serif"};
+  }
+
+  get labelSt(){const t=this.tokens();return `font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:${t.dim};display:block`;}
+  get inputSt(){const t=this.tokens();return `padding:14px;font-size:15px;font-weight:600;background:${t.surface};color:${t.text};border:2.5px solid ${t.line2};border-radius:13px;outline:none;width:100%;display:block`;}
+
+  beep(){try{const a=new(window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="sine";o.frequency.value=880;g.gain.setValueAtTime(0.001,a.currentTime);g.gain.exponentialRampToValueAtTime(0.28,a.currentTime+0.02);g.gain.exponentialRampToValueAtTime(0.001,a.currentTime+0.38);o.start();o.stop(a.currentTime+0.4);}catch(e){}}
+  beepDone(){try{const a=new(window.AudioContext||window.webkitAudioContext)();[880,1100,1320].forEach((f,i)=>{const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.type="triangle";o.frequency.value=f;const t=a.currentTime+i*0.14;g.gain.setValueAtTime(0.001,t);g.gain.exponentialRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.001,t+0.26);o.start(t);o.stop(t+0.3);});}catch(e){}}
+  fireConfetti(){this.setState({confetti:true});clearTimeout(this._cf);this._cf=setTimeout(()=>this.setState({confetti:false}),2800);}
+
+  bumpStreak(){
+    const today=this.todayISO();let {streak,lastActive}=this.state;
+    if(lastActive===today) return {streak,lastActive};
+    const y=new Date();y.setDate(y.getDate()-1);
+    const yi=y.getFullYear()+"-"+String(y.getMonth()+1).padStart(2,"0")+"-"+String(y.getDate()).padStart(2,"0");
+    return {streak:lastActive===yi?streak+1:1,lastActive:today};
+  }
+
+  onName=e=>this.setState(s=>({form:{...s.form,name:e.target.value}}));
+  onAge=e=>this.setState(s=>({form:{...s.form,age:e.target.value}}));
+  onHeight=e=>this.setState(s=>({form:{...s.form,height:e.target.value}}));
+  onWeight=e=>this.setState(s=>({form:{...s.form,weight:e.target.value}}));
+  onGoal=e=>this.setState(s=>({form:{...s.form,goal:e.target.value}}));
+  setFreq=n=>()=>this.setState(s=>({form:{...s.form,freq:n}}));
+  submitOnboard=()=>{
+    const f=this.state.form;
+    if(!String(f.name||"").trim()){alert("Coloque seu nome para começar 💪");return;}
+    const user={name:String(f.name).trim(),age:+f.age||28,height:+f.height||175,weight:+f.weight||106,goal:+f.goal||90,freq:+f.freq||5};
+    const wl=[{date:this.todayISO(),kg:user.weight}];
+    const upd={user,onboarded:true,weightLog:wl,startDate:this.todayISO()};
+    this.setState(upd);this.persist(upd);
+  };
+
+  toggleTheme=()=>{const theme=this.state.theme==="dark"?"light":"dark";this.setState({theme});this.persist({theme});};
+  setTab=t=>()=>this.setState({tab:t,overlay:null});
+  selectDay=i=>()=>this.setState({selDay:i,expEx:null});
+  weekMinus=()=>{const week=Math.max(1,this.state.week-1);this.setState({week});this.persist({week});};
+  weekPlus=()=>{const week=Math.min(8,this.state.week+1);this.setState({week});this.persist({week});};
+
+  openProfile=()=>{
+    const u=this.state.user,p=this.state.partner;
+    this.setState({overlay:"profile",editName:u.name,editWeight:u.weight,editGoal:u.goal,editHeight:u.height||175,editWeek:this.state.week,partnerNameEdit:p.name,partnerWeeksEdit:p.weeks});
+  };
+  closeOverlay=()=>this.setState({overlay:null,prenatalTab:0});
+  stopProp=e=>{if(e&&e.stopPropagation)e.stopPropagation();};
+  goPregnancy=()=>this.setState({overlay:"pregnancy",prenatalTab:0});
+  onEditName=e=>this.setState({editName:e.target.value});
+  onEditWeight=e=>this.setState({editWeight:e.target.value});
+  onEditGoal=e=>this.setState({editGoal:e.target.value});
+  onEditHeight=e=>this.setState({editHeight:e.target.value});
+  onEditWeek=e=>this.setState({editWeek:e.target.value});
+  onPartnerName=e=>this.setState({partnerNameEdit:e.target.value});
+  onPartnerWeeks=e=>this.setState({partnerWeeksEdit:e.target.value});
+  saveProfile=()=>{
+    const u={...this.state.user,name:this.state.editName||this.state.user.name,weight:+this.state.editWeight||this.state.user.weight,goal:+this.state.editGoal||this.state.user.goal,height:+this.state.editHeight||this.state.user.height||175};
+    const p={name:this.state.partnerNameEdit||this.state.partner.name,weeks:+this.state.partnerWeeksEdit||this.state.partner.weeks};
+    const week=Math.min(8,Math.max(1,+this.state.editWeek||this.state.week));
+    const upd={user:u,partner:p,week,overlay:null};
+    this.setState(upd);this.persist(upd);
+  };
+
+  toggleEx=id=>()=>this.setState(s=>({expEx:s.expEx===id?null:id}));
+  mkToggleDone=(d,ex)=>()=>{
+    const k=this.key(this.state.week,d,ex),done={...this.state.done},now=!done[k];
+    if(now) done[k]=true; else delete done[k];
+    let extra={done};
+    if(now){extra={...extra,...this.bumpStreak()};if(navigator.vibrate)navigator.vibrate(40);this.beep();this.fireConfetti();}
+    this.setState(extra);this.persist(extra);
+  };
+
+  toggleMeal=id=>()=>this.setState(s=>({expMeal:s.expMeal===id?null:id}));
+  toggleShop=()=>this.setState(s=>({expShop:!s.expShop}));
+
+  onWeightInput=e=>this.setState({newWeight:e.target.value});
+  addWeight=()=>{
+    const kg=parseFloat(this.state.newWeight);
+    if(!kg||kg<20||kg>400){alert("Informe um peso válido.");return;}
+    const weightLog=[...this.state.weightLog,{date:this.todayISO(),kg}];
+    this.setState({weightLog,newWeight:""});this.persist({weightLog});
+  };
+
+  toggleHabit=id=>()=>{
+    const today=this.todayISO(),habits={...this.state.habits};
+    habits[today]={...(habits[today]||{}),[id]:!(habits[today]||{})[id]};
+    this.setState({habits});this.persist({habits});
+  };
+
+  calPrev=()=>this.setState(s=>{
+    let m=s.calMonth-1,y=s.calYear;
+    if(m<0){m=11;y--;}
+    return{calYear:y,calMonth:m};
+  });
+  calNext=()=>this.setState(s=>{
+    let m=s.calMonth+1,y=s.calYear;
+    if(m>11){m=0;y++;}
+    return{calYear:y,calMonth:m};
+  });
+
+  setPrenatalTab0=()=>this.setState({prenatalTab:0});
+  setPrenatalTab1=()=>this.setState({prenatalTab:1});
+  setPrenatalTab2=()=>this.setState({prenatalTab:2});
+
+  onPartnerWeightInput=e=>this.setState({newPartnerWeight:e.target.value});
+  addPartnerWeight=()=>{
+    const kg=parseFloat(this.state.newPartnerWeight);
+    if(!kg||kg<20||kg>250){alert("Informe um peso válido.");return;}
+    const partnerWeightLog=[...this.state.partnerWeightLog,{date:this.todayISO(),kg}];
+    this.setState({partnerWeightLog,newPartnerWeight:""});this.persist({partnerWeightLog});
+  };
+
+  openTimer=()=>{clearInterval(this._rt);this.setState(s=>({rest:{...s.rest,open:true,remaining:s.rest.preset,running:false}}));};
+  closeTimer=()=>{clearInterval(this._rt);this.setState(s=>({rest:{...s.rest,open:false,running:false}}));};
+  timerToggle=()=>{
+    if(this.state.rest.running){clearInterval(this._rt);this.setState(s=>({rest:{...s.rest,running:false}}));}
+    else{
+      this.setState(s=>({rest:{...s.rest,running:true}}));
+      this._rt=setInterval(()=>{
+        this.setState(s=>{
+          const rem=s.rest.remaining-1;
+          if(rem<=0){clearInterval(this._rt);this.beepDone();if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);return{rest:{...s.rest,remaining:0,running:false}};}
+          return{rest:{...s.rest,remaining:rem}};
+        });
+      },1000);
+    }
+  };
+  timerReset=()=>{clearInterval(this._rt);this.setState(s=>({rest:{...s.rest,remaining:s.rest.preset,running:false}}));};
+  setPreset=n=>()=>{clearInterval(this._rt);this.setState(s=>({rest:{...s.rest,preset:n,remaining:n,running:false}}));};
+
+  printReport=()=>{
+    const S=this.state,D=S.D;
+    const wl=S.weightLog,curW=wl.length?wl[wl.length-1].kg:S.user.weight,startW=wl.length?wl[0].kg:S.user.weight;
+    const dW=+(curW-startW).toFixed(1);
+    const win=window.open("","_blank","width=800,height=600");
+    if(!win) return;
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>DashFit — Relatório</title>
+    <style>body{font-family:sans-serif;max-width:700px;margin:40px auto;color:#111}h1{font-size:28px;border-bottom:3px solid #2ECC71;padding-bottom:10px}h2{font-size:18px;margin-top:28px;border-left:4px solid #2ECC71;padding-left:10px}table{width:100%;border-collapse:collapse;margin:10px 0}td,th{padding:8px 10px;border:1px solid #ddd;font-size:14px}th{background:#f4f4f4;font-weight:700}.green{color:#2ECC71;font-weight:bold}</style>
+    </head><body>
+    <h1>📊 DashFit — Relatório de Progresso</h1>
+    <p><strong>Atleta:</strong> ${S.user.name} &nbsp;|&nbsp; <strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}</p>
+    <h2>Resumo Físico</h2>
+    <table><tr><th>Peso inicial</th><th>Peso atual</th><th>Meta</th><th>Variação</th></tr>
+    <tr><td>${startW} kg</td><td>${curW} kg</td><td>${S.user.goal} kg</td><td class="green">${dW<0?dW+" kg ▼":dW>0?"+"+dW+" kg ▲":"Estável"}</td></tr></table>
+    <h2>Programa</h2><p>Semana atual: <strong>${S.week} de 8</strong> &nbsp;|&nbsp; Fase: <strong>${D?D.PHASES[D.phaseOfWeek(S.week)-1].nome:"—"}</strong></p>
+    <p>Total de exercícios concluídos: <strong>${Object.keys(S.done).length}</strong></p>
+    <p>Streak atual: <strong>${S.streak} dias 🔥</strong></p>
+    <h2>Histórico de Peso</h2>
+    <table><tr><th>Data</th><th>Peso</th></tr>${wl.map(e=>`<tr><td>${e.date}</td><td>${e.kg} kg</td></tr>`).join("")}</table>
+    <p style="margin-top:40px;font-size:11px;color:#aaa">Gerado por DashFit · ${new Date().toISOString()}</p>
+    </body></html>`);
+    win.document.close();
+    setTimeout(()=>win.print(),600);
+  };
+
+  buildLineChart(data,h=110,color,label=""){
+    const t=this.tokens();if(!color)color=t.accent;
+    if(!data||!data.length) return React.createElement("p",{style:{color:t.dim,fontSize:12,textAlign:"center",padding:"16px 0"}},"Sem registros ainda. Registre seu peso para ver a evolução.");
+    if(data.length===1) return React.createElement("div",{style:{padding:"14px 0",textAlign:"center"}},React.createElement("span",{style:{fontFamily:"'Space Grotesk'",fontWeight:700,fontSize:28,color}},data[0].kg+" kg"),React.createElement("p",{style:{color:t.dim,fontSize:11,margin:"4px 0 0"}},"Apenas 1 registro"));
+    const kgs=data.map(e=>+e.kg),minK=Math.min(...kgs),maxK=Math.max(...kgs),range=maxK-minK||0.5;
+    const cw=400,ch=h,padL=36,padB=20,padT=14,padR=10,pw=cw-padL-padR,ph=ch-padB-padT;
+    const pts=data.map((e,i)=>({
+      x:padL+(i/(data.length-1))*pw,
+      y:padT+(1-(+e.kg-minK)/range)*ph,
+      kg:+e.kg,date:e.date
+    }));
+    const pathD=pts.map((p,i)=>`${i===0?"M":"L"} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(" ");
+    const areaD=`${pathD} L ${pts[pts.length-1].x.toFixed(1)} ${(ch-padB).toFixed(1)} L ${pts[0].x.toFixed(1)} ${(ch-padB).toFixed(1)} Z`;
+    const yLabels=[minK,Math.round((minK+maxK)/2*10)/10,maxK];
+    return React.createElement("svg",{width:"100%",height:ch,viewBox:`0 0 ${cw} ${ch}`,style:{overflow:"visible",display:"block",marginTop:6}},
+      yLabels.map((v,i)=>{
+        const y=padT+(1-(v-minK)/range)*ph;
+        return React.createElement(React.Fragment,{key:"g"+i},
+          React.createElement("line",{x1:padL,y1:y,x2:cw-padR,y2:y,stroke:t.track,strokeWidth:1,strokeDasharray:"3,3"}),
+          React.createElement("text",{x:padL-4,y:y+4,textAnchor:"end",fontSize:9,fill:t.dim,fontWeight:600},v)
+        );
+      }),
+      React.createElement("line",{x1:padL,y1:padT,x2:padL,y2:ch-padB,stroke:t.line2,strokeWidth:1.5}),
+      React.createElement("line",{x1:padL,y1:ch-padB,x2:cw-padR,y2:ch-padB,stroke:t.line2,strokeWidth:1.5}),
+      React.createElement("path",{d:areaD,fill:color,opacity:.1}),
+      React.createElement("path",{d:pathD,fill:"none",stroke:color,strokeWidth:2.5,strokeLinecap:"round",strokeLinejoin:"round"}),
+      pts.map((p,i)=>React.createElement("circle",{key:"d"+i,cx:p.x,cy:p.y,r:4.5,fill:color,stroke:"#000",strokeWidth:1.5})),
+      pts.filter((_,i)=>data.length<=6||i===0||i===pts.length-1).map((p,i)=>
+        React.createElement("text",{key:"l"+i,x:p.x,y:p.y-9,textAnchor:"middle",fontSize:9,fill:color,fontWeight:700},p.kg)
+      ),
+      pts.filter((_,i)=>i===0||i===pts.length-1||(data.length<=5)).map((p,i)=>
+        React.createElement("text",{key:"dt"+i,x:p.x,y:ch-padB+13,textAnchor:"middle",fontSize:8,fill:t.dim},String(p.date).slice(5))
+      )
+    );
+  }
+
+  buildMonthCalendar(year,month,done,SPLIT){
+    const t=this.tokens(),today=this.todayISO();
+    const dim=new Date(year,month+1,0).getDate();
+    const firstDow=(new Date(year,month,1).getDay()+6)%7;
+    const cells=[];
+    for(let i=0;i<firstDow;i++) cells.push(null);
+    for(let d=1;d<=dim;d++) cells.push(d);
+    const dl=["S","T","Q","Q","S","S","D"];
+    return React.createElement("div",{style:{width:"100%"}},
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3,marginBottom:4}},
+        dl.map((l,i)=>React.createElement("div",{key:i,style:{textAlign:"center",fontSize:9,fontWeight:800,color:t.dim,padding:"1px 0"}},l))
+      ),
+      React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3}},
+        cells.map((d,i)=>{
+          if(!d) return React.createElement("div",{key:"e"+i});
+          const dow=(firstDow+d-1)%7;
+          const iso=`${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+          const isToday=iso===today,isFuture=iso>today,isRest=SPLIT[dow]?.rest;
+          let hasDone=false;
+          if(!isRest&&!isFuture){
+            for(let w=1;w<=8;w++){if(SPLIT[dow]?.ex?.some(ex=>done[`${w}-${dow}-${ex}`])){hasDone=true;break;}}
+          }
+          let bg="transparent",border="transparent",tc=t.dim;
+          if(isToday){bg=t.surface2;border=t.accent;tc=t.text;}
+          else if(hasDone){bg=`rgba(46,204,113,.14)`;border=t.accent;tc=t.accent;}
+          else if(isRest&&!isFuture){tc=t.dim;}
+          return React.createElement("div",{key:"c"+i,style:{aspectRatio:"1",display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:isToday?800:600,fontFamily:"'Space Grotesk'",background:bg,border:`1.5px solid ${border}`,borderRadius:6,color:tc,position:"relative",minHeight:28}},
+            d,
+            hasDone&&React.createElement("div",{style:{position:"absolute",bottom:2,right:2,width:4,height:4,background:t.accent,borderRadius:"50%"}})
+          );
+        })
+      )
+    );
+  }
+
+  renderVals(){
+    const S=this.state,D=S.D,t=this.tokens();
+    const loading=S.loading,showOnboard=!loading&&!S.onboarded,showApp=!loading&&S.onboarded;
+
+    const labelSt=this.labelSt,inputSt=this.inputSt;
+    const freqOpts=[3,4,5,6].map(n=>({label:n+"x",set:this.setFreq(n),
+      style:`flex:1;padding:13px 0;font-family:'Space Grotesk';font-weight:700;font-size:15px;cursor:pointer;border-radius:12px;border:2.5px solid ${S.form.freq===n?'#000':t.line2};background:${S.form.freq===n?t.accent:t.surface};color:${S.form.freq===n?'#06140B':t.text};box-shadow:${S.form.freq===n?'3px 3px 0 #000':'none'}`}));
+
+    const tabs=[["home","🏠","Início"],["workouts","🏋️","Treinos"],["diet","🥗","Dieta"],["progress","📈","Progresso"],["manage","📊","Gestão"]];
+    const navItems=tabs.map(([id,icon,label])=>({icon,label,go:this.setTab(id),
+      style:`flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;background:none;border:none;cursor:pointer;border-radius:10px;color:${S.tab===id?t.accent:t.dim}`}));
+
+    const SPLIT=D?D.SPLIT:[],EX=D?D.EXERCISES:{};
+    const phases=D?D.PHASES:[];
+    const phaseId=D?D.phaseOfWeek(S.week):1;
+    const phase=phases[phaseId-1]||{nome:"Adaptação",cor:"#2ECC71",desc:""};
+
+    const today=this.todayISO(),hour=new Date().getHours();
+    const greeting=hour<12?"Bom dia,":hour<18?"Boa tarde,":"Boa noite,";
+    const todayDay=SPLIT[this.todayIdx()]||{dia:"",foco:"",rest:true,ex:[],nota:""};
+    const tStats=this.dayStats(this.todayIdx());
+    const wl=S.weightLog,curW=wl.length?+wl[wl.length-1].kg:+S.user.weight;
+    const startW=wl.length?+wl[0].kg:+S.user.weight;
+    const dW=+(curW-startW).toFixed(1);
+    const goalW=+S.user.goal||90;
+    const h=+S.user.height||175;
+    const bmiVal=+(curW/((h/100)**2)).toFixed(1);
+    const progressPct=startW>goalW?Math.max(0,Math.min(100,Math.round((startW-curW)/(startW-goalW)*100))):0;
+    const toGoal=Math.max(0,+(curW-goalW).toFixed(1));
+    const rc=+(2*Math.PI*52).toFixed(2),wp=this.weekPct();
+
+    const selDay=S.selDay!==null?S.selDay:this.todayIdx();
+    const dayData=SPLIT[selDay]||{dia:"",foco:"",rest:true,ex:[],nota:""};
+
+    const dayPills=SPLIT.map((day,i)=>{
+      const s=this.dayStats(i),isSel=selDay===i,isDone=!day.rest&&s.total>0&&s.done===s.total;
+      return{dia:day.dia,sub:day.rest?"🛌":isDone?"✓":`${s.done}/${s.total}`,go:this.selectDay(i),
+        style:`flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:9px 12px;border:2.5px solid ${isSel?"#000":t.line2};border-radius:13px;cursor:pointer;background:${isSel?t.accent:t.surface};color:${isSel?"#06140B":t.text};box-shadow:${isSel?"3px 3px 0 #000":"none"};min-width:50px;font-family:'Space Grotesk'`};
+    });
+
+    const weekTimeline=Array.from({length:8},(_,i)=>{
+      const wk=i+1,ph=D?D.phaseOfWeek(wk):1,phC=phases[ph-1]?.cor||t.accent,isCur=wk===S.week;
+      return{num:wk,go:()=>{const week=wk;this.setState({week});this.persist({week});},
+        style:`flex:1;padding:6px 0;border-radius:7px;border:${isCur?"2.5px solid #000":"1.5px solid "+t.line2};background:${isCur?phC:t.surface2};color:${isCur?"#06140B":t.dim};font-family:'Space Grotesk';font-weight:700;cursor:pointer;text-align:center`};
+    });
+    const phaseLabels=[
+      {label:"Adaptação",style:`flex:3;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#2ECC71;text-align:center`},
+      {label:"Consolidação",style:`flex:3;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#3D7BF2;text-align:center`},
+      {label:"Intensif.",style:`flex:2;font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#F2B33D;text-align:center`}
+    ];
+
+    const dayExercises=!dayData.rest?dayData.ex.map(exId=>{
+      const ex=EX[exId]||{nome:exId,move:"vertical",musc:[],presc:{},steps:[],dica:""};
+      const isDone=this.isDone(S.week,selDay,exId),isExp=S.expEx===exId;
+      const pr=ex.presc[phaseId]||ex.presc[1]||"";
+      return{id:exId,nome:ex.nome,move:ex.move,presc:pr,musc:ex.musc,expanded:isExp,
+        steps:ex.steps.map((text,n)=>({n:n+1,text})),dica:ex.dica,toggle:this.toggleEx(exId),
+        markDone:this.mkToggleDone(selDay,exId),
+        ytUrl:`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.nome+" calistenia iniciante")}`,
+        btnLabel:isDone?"✓ CONCLUÍDO":"MARCAR COMO FEITO",
+        btnStyle:`flex:1;padding:12px;border:2.5px solid #000;border-radius:12px;font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer;background:${isDone?"#0d1f11":t.accent};color:${isDone?t.accent:"#06140B"};box-shadow:3px 3px 0 #000`,
+        badgeLabel:isDone?"✓":"",
+        badgeStyle:`width:24px;height:24px;border-radius:7px;border:2px solid ${isDone?t.accent:t.line2};background:${isDone?t.accent:"transparent"};display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-weight:700;font-size:13px;color:#06140B;flex:none`,
+        chevron:isExp?"▲":"▼",
+        cardStyle:`background:${isDone?"#0c1d10":t.surface};border:2.5px solid ${isDone?t.accent:t.line2};border-radius:18px;padding:15px${isDone?";box-shadow:4px 4px 0 "+t.accent:""}`};
+    }):[];
+
+    const MEALS=D?D.MEALS:[],SHOP=D?D.SHOPPING:{},DM=D?D.DIET_MACROS:{kcal:1900,prot:150,carb:165,gord:60};
+    const totCal=DM.prot*4+DM.carb*4+DM.gord*9;
+    const macroPct={prot:Math.round(DM.prot*4/totCal*100),carb:Math.round(DM.carb*4/totCal*100),gord:Math.round(DM.gord*9/totCal*100)};
+    const macroItems=[{val:DM.kcal,label:"Kcal",color:t.accent},{val:DM.prot+"g",label:"Prot",color:"#3D7BF2"},{val:DM.carb+"g",label:"Carb",color:"#F2B33D"},{val:DM.gord+"g",label:"Gord",color:"#E8533F"}];
+    const meals=MEALS.map(m=>({...m,expanded:S.expMeal===m.id,toggle:this.toggleMeal(m.id),chevron:S.expMeal===m.id?"▲":"▼",cardStyle:`background:${t.surface};border:2.5px solid ${t.line2};border-radius:18px;padding:14px`}));
+    const shopCategories=Object.entries(SHOP).map(([name,items])=>({name,items}));
+
+    const todayH=S.habits[today]||{},HABITS=D?D.HABITS:[];
+    const habitItems=HABITS.map(h=>{
+      const checked=!!todayH[h.id];
+      return{...h,checked,toggle:this.toggleHabit(h.id),
+        style:`display:flex;align-items:center;justify-content:space-between;padding:12px 13px;background:${checked?"#0c1d10":t.surface};border:2.5px solid ${checked?t.accent:t.line2};border-radius:13px;cursor:pointer;box-shadow:${checked?"3px 3px 0 "+t.accent:"none"}`,
+        checkStyle:`width:26px;height:26px;border-radius:8px;border:2.5px solid ${checked?t.accent:t.line2};background:${checked?t.accent:"transparent"};display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;color:#06140B`,
+        checkIcon:checked?"✓":""};
+    });
+
+    const monthNames=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    const calMonthLabel=`${monthNames[S.calMonth]} ${S.calYear}`;
+    const monthCalendar=this.buildMonthCalendar(S.calYear,S.calMonth,S.done,SPLIT);
+
+    const wlAll=wl.slice();
+    const weightLineChart=this.buildLineChart(wlAll.slice(-12));
+    const weightHistory=wlAll.slice().reverse().slice(0,8).map((e,i,arr)=>{
+      const prev=arr[i+1],delta=prev?+(+e.kg-+prev.kg).toFixed(1):0;
+      return{date:e.date,kg:+e.kg,delta:delta===0?"—":delta<0?delta+" kg 🔻":"+"+delta+" kg",dc:delta<0?t.accent:delta>0?"#E8533F":t.dim};
+    });
+
+    const adh=this.weekPct();
+    const macroSummary=[
+      {label:"Calorias",val:`${DM.kcal} kcal`,pct:100,color:t.accent},
+      {label:"Proteína",val:`${DM.prot}g/dia`,pct:Math.round(DM.prot*4/DM.kcal*100),color:"#3D7BF2"},
+      {label:"Carboidratos",val:`${DM.carb}g/dia`,pct:Math.round(DM.carb*4/DM.kcal*100),color:"#F2B33D"},
+      {label:"Gordura",val:`${DM.gord}g/dia`,pct:Math.round(DM.gord*9/DM.kcal*100),color:"#E8533F"}
+    ];
+    const manageLineChart=this.buildLineChart(wlAll.slice(-20),120);
+    const adherenceChart=React.createElement("div",{style:{display:"flex",alignItems:"flex-end",gap:5,height:80,marginTop:10,paddingLeft:30,borderLeft:`2px solid ${t.line2}`,borderBottom:`2px solid ${t.line2}`,position:"relative"}},
+      ...Array.from({length:8},(_,i)=>{
+        const wk=i+1,isCur=wk===S.week,pct=isCur?adh:wk<S.week?Math.min(100,40+i*8):0;
+        const phC=(D?D.PHASES[D.phaseOfWeek(wk)-1].cor:"#2ECC71");
+        const bh=wk<=S.week?Math.max(4,Math.round(pct/100*64)):4;
+        return React.createElement("div",{key:i,style:{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:2}},
+          React.createElement("span",{style:{fontSize:8,color:wk<=S.week?phC:t.dim,fontWeight:700}},wk<=S.week?pct+"%":" "),
+          React.createElement("div",{style:{width:"100%",height:bh,background:isCur?phC:wk<S.week?phC+"66":t.line2,border:`1.5px solid ${isCur?"#000":"transparent"}`,borderRadius:"3px 3px 0 0",boxShadow:isCur?`2px 2px 0 #000`:"none"}}),
+          React.createElement("span",{style:{fontSize:8,color:isCur?phC:t.dim,fontWeight:isCur?800:500}},`S${wk}`)
+        );
+      })
+    );
+
+    const rp=S.rest.preset,rr=S.rest.remaining,rc2=2*Math.PI*58;
+    const restDisplay=React.createElement("div",{style:{position:"relative",width:148,height:148,margin:"0 auto"}},
+      React.createElement("svg",{width:148,height:148,viewBox:"0 0 148 148",style:{transform:"rotate(-90deg)"}},
+        React.createElement("circle",{cx:74,cy:74,r:58,fill:"none",stroke:t.track,strokeWidth:11}),
+        React.createElement("circle",{cx:74,cy:74,r:58,fill:"none",stroke:rr===0?"#E8533F":t.accent,strokeWidth:11,strokeLinecap:"round",strokeDasharray:rc2,strokeDashoffset:rc2*(1-rr/rp),style:{transition:"stroke-dashoffset 0.9s linear"}})
+      ),
+      React.createElement("div",{style:{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center"}},
+        React.createElement("span",{style:{fontFamily:"'Space Grotesk'",fontWeight:700,fontSize:46,lineHeight:1,color:rr===0?"#E8533F":t.text}},
+          String(Math.floor(rr/60)).padStart(2,"0")+":"+String(rr%60).padStart(2,"0")),
+        React.createElement("span",{style:{fontSize:9,color:t.dim,fontWeight:700,letterSpacing:2,marginTop:6}},rr===0?"PRONTO!":"DESCANSO")
+      )
+    );
+
+    const PRENATAL=D?D.PRENATAL:{disclaimer:"",ex:[],diet:[]};
+    const prenatalExercises=(PRENATAL.ex||[]).map(e=>({...e}));
+    const prenatalDiet=(PRENATAL.diet||[]).map(d=>({...d}));
+    const pwl=S.partnerWeightLog;
+    const partnerWeightHistory=pwl.slice().reverse().slice(0,8).map(e=>({date:e.date,kg:+e.kg}));
+    const partnerWeightChart=this.buildLineChart(pwl.slice(-12),100,"#F2B33D");
+    const pregnancyPct=Math.round((+S.partner.weeks||32)/40*100);
+    const pregnancyWeeksLeft=Math.max(0,40-(+S.partner.weeks||32));
+
+    const prenTabBtn=(i)=>`flex:1;padding:9px;font-family:'Space Grotesk';font-weight:700;font-size:12px;cursor:pointer;border-radius:10px;border:2px solid ${S.prenatalTab===i?"#000":t.line2};background:${S.prenatalTab===i?"#F2B33D":t.surface};color:${S.prenatalTab===i?"#06140B":t.dim};box-shadow:${S.prenatalTab===i?"2px 2px 0 #000":"none"}`;
+
+    const cols=[t.accent,"#3D7BF2","#F2B33D","#E8533F","#fff","#FF69B4","#B8F5D8"];
+    let confettiPieces=null;
+    if(S.confetti){
+      confettiPieces=React.createElement(React.Fragment,null,
+        Array.from({length:70}).map((_,i)=>React.createElement("div",{key:i,style:{position:"absolute",left:(Math.random()*100)+"%",top:"-8vh",width:(6+Math.random()*8)+"px",height:(9+Math.random()*9)+"px",background:cols[i%cols.length],border:"1.5px solid #000",borderRadius:Math.random()>0.5?"50%":"2px",animation:`df-fall ${1.1+Math.random()*1.2}s linear ${Math.random()*0.45}s forwards`}}))
+      );
+    }
+
+    return {
+      rootStyle:this.rootStyle(),loading,showOnboard,showApp,
+      labelSt,inputSt,
+      form:S.form,freqOpts,onName:this.onName,onAge:this.onAge,onHeight:this.onHeight,onWeight:this.onWeight,onGoal:this.onGoal,submitOnboard:this.submitOnboard,
+      streak:S.streak,themeIcon:S.theme==="dark"?"☀️":"🌙",toggleTheme:this.toggleTheme,
+      avatarInitial:(S.user.name||"D").trim().charAt(0).toUpperCase(),openProfile:this.openProfile,
+      navItems,
+      isHome:S.tab==="home",isWorkouts:S.tab==="workouts",isDiet:S.tab==="diet",isProgress:S.tab==="progress",isManage:S.tab==="manage",
+      greeting,userName:S.user.name||"Atleta",
+      quote:D?D.QUOTES[S.quoteIdx%D.QUOTES.length].t:"",
+      todayName:todayDay.dia,todayFoco:todayDay.foco||"Sem treino hoje",
+      todaySub:todayDay.rest?(todayDay.nota||"Descanse hoje"):`${todayDay.ex.length} exercícios · ~30 min`,
+      todayDoneCount:tStats.done,todayExCount:tStats.total||0,
+      todayCta:todayDay.rest?"VER A SEMANA →":(tStats.done===tStats.total&&tStats.total>0?"TREINO COMPLETO ✓":"INICIAR TREINO →"),
+      goWorkout:this.setTab("workouts"),
+      ringCirc:rc,ringOff:+(rc*(1-wp/100)).toFixed(2),weekPct:wp,weekDoneDays:this.weekDoneDays(),
+      phaseId,phaseName:phase.nome,phaseColor:phase.cor,phaseDesc:phase.desc||"",weekNum:S.week,programPct:Math.round(S.week/8*100),
+      totalDone:this.totalDoneCount(),curWeight:curW,
+      weightDelta:dW===0?"estável":dW<0?dW+" kg":"+"+dW+" kg",
+      bmi:bmiVal,goalWeight:goalW,progressPct,toGoal,startWeight:startW,
+      dayPills,weekTimeline,phaseLabels,
+      dayIsRest:dayData.rest,dayHasEx:!dayData.rest,dayFoco:dayData.foco,dayNota:dayData.nota||"",dayExercises,openTimer:this.openTimer,
+      weekMinus:this.weekMinus,weekPlus:this.weekPlus,
+      macroItems,macroPct,meals,shopCategories,shopChevron:S.expShop?"▲":"▼",shopOpen:S.expShop,toggleShop:this.toggleShop,
+      habitItems,weightLineChart,weightHistory,
+      newWeight:S.newWeight,onWeightInput:this.onWeightInput,addWeight:this.addWeight,
+      calMonthLabel,monthCalendar,calPrev:this.calPrev,calNext:this.calNext,
+      adherencePct:adh,macroSummary,manageLineChart,adherenceChart,printReport:this.printReport,
+      restOpen:S.rest.open,restDisplay,timerBtnLabel:S.rest.running?"PAUSAR":"INICIAR",
+      timerToggle:this.timerToggle,timerReset:this.timerReset,closeTimer:this.closeTimer,stopProp:this.stopProp,
+      timerPresets:[30,45,60,90].map(n=>({label:n+"s",set:this.setPreset(n),
+        style:`flex:1;padding:9px;border:2.5px solid ${S.rest.preset===n?"#000":t.line2};border-radius:9px;font-family:'Space Grotesk';font-weight:700;font-size:13px;cursor:pointer;background:${S.rest.preset===n?t.accent:t.surface};color:${S.rest.preset===n?"#06140B":t.text};box-shadow:${S.rest.preset===n?"2px 2px 0 #000":"none"}`})),
+      profileOpen:S.overlay==="profile",pregnancyOpen:S.overlay==="pregnancy",
+      closeOverlay:this.closeOverlay,
+      editName:S.editName,editWeight:S.editWeight,editGoal:S.editGoal,editHeight:S.editHeight,editWeek:S.editWeek,
+      onEditName:this.onEditName,onEditWeight:this.onEditWeight,onEditGoal:this.onEditGoal,onEditHeight:this.onEditHeight,onEditWeek:this.onEditWeek,
+      partnerNameVal:S.partnerNameEdit,partnerWeeksVal:S.partnerWeeksEdit,
+      onPartnerName:this.onPartnerName,onPartnerWeeks:this.onPartnerWeeks,
+      saveProfile:this.saveProfile,goPregnancy:this.goPregnancy,
+      prenatalDisclaimer:PRENATAL.disclaimer,prenatalExercises,prenatalDiet,
+      prenatalIsEx:S.prenatalTab===0,prenatalIsDiet:S.prenatalTab===1,prenatalIsWeight:S.prenatalTab===2,
+      setPrenatalTab0:this.setPrenatalTab0,setPrenatalTab1:this.setPrenatalTab1,setPrenatalTab2:this.setPrenatalTab2,
+      prenatalTab0Style:prenTabBtn(0),prenatalTab1Style:prenTabBtn(1),prenatalTab2Style:prenTabBtn(2),
+      pregnancyName:S.partner.name||"Esposa",pregnancyWeeks:+S.partner.weeks||32,
+      pregnancyPct,pregnancyWeeksLeft,
+      partnerWeightHistory,partnerWeightChart,
+      newPartnerWeight:S.newPartnerWeight,onPartnerWeightInput:this.onPartnerWeightInput,addPartnerWeight:this.addPartnerWeight,
+      confetti:S.confetti,confettiPieces
+    };
+  }
+}
+</script>
+</body>
+</html>
